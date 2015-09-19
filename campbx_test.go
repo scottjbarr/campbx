@@ -67,12 +67,12 @@ func TestGetTicker(t *testing.T) {
 	expect(t, ticker.Ask, float32(244.99))
 }
 
-func TestGetDepth(t *testing.T) {
+func TestGetOrderBook(t *testing.T) {
 	body := `{"Asks":[[244.99, 0.99]], "Bids":[[236.38, 0.02], [234.01, 1.8]]}`
 	server, client := httpMock(200, body)
 	defer server.Close()
 
-	orderBook, err := client.GetDepth()
+	orderBook, err := client.GetOrderBook()
 
 	if err != nil {
 		t.Errorf("GetDepth : %v", err)

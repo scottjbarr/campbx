@@ -72,8 +72,8 @@ func (c *Client) GetTicker() (*Ticker, error) {
 	return &ticker, nil
 }
 
-// GetDepth returns the OrderBook from the API
-func (c *Client) GetDepth() (*OrderBook, error) {
+// GetOrderBook returns the OrderBook from the API
+func (c *Client) GetOrderBook() (*OrderBook, error) {
 	var body []byte
 	var err error
 
