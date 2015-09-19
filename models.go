@@ -16,9 +16,14 @@ type Ticker struct {
 // Sample response/structure
 //
 //     { "Asks":[ [ 244.99, 0.990 ], ... ], "Bids":[ [ 236.38, 0.020 ], ... ] }
-
 type OrderBook struct {
-	Asks [][]float32 `json:"Asks"`
-	Bids [][]float32 `json:"Bids"`
+	Asks []Order `json:"Asks"`
+	Bids []Order `json:"Bids"`
 }
 
+// Order represents the price and quanty of an individual Order, or the summary
+// of multiple Orders (as in the case of an Order Book)
+type Order struct {
+	Price    float32
+	Quantity float32
+}

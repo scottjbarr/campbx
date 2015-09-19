@@ -78,10 +78,35 @@ func (c *Client) GetDepth() (*OrderBook, error) {
 		return nil, err
 	}
 
-	var orderBook OrderBook
+	// this is ugly, I want to Unmarshal this in one shot.
+	// get the float array data first
+	holder := struct {
+		Asks [][]float32 `json:"Asks"`
+		Bids [][]float32 `json:"Bids"`
+	}{}
 
-	if err := json.Unmarshal(body, &orderBook); err != nil {
+	if err := json.Unmarshal(body, &holder); err != nil {
 		return nil, err
+	}
+
+	// now convert those []float32 arrays of price/quantity values to Order
+	// structs
+	orderBook := OrderBook{}
+
+	for _, o := range holder.Asks {
+		order := Order{
+			Price:    o[0],
+			Quantity: o[1],
+		}
+		orderBook.Asks = append(orderBook.Asks, order)
+	}
+
+	for _, o := range holder.Bids {
+		order := Order{
+			Price:    o[0],
+			Quantity: o[1],
+		}
+		orderBook.Bids = append(orderBook.Bids, order)
 	}
 
 	return &orderBook, nil
