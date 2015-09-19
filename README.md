@@ -13,4 +13,8 @@ See
 
 ## Licence
 
+The MIT License (MIT)
+
 Copyright (c) 2015 Scott Barr
+
+See [LICENCE.md](LICENCE.md)
