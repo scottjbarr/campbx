@@ -5,34 +5,37 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 const (
-	host       = "https://campbx.com/api"
-	timeout    = 5
+	prefix     = "/api"
+	timeout    = 5 * time.Second
 	tickerPath = "xticker"
 	depthPath  = "xdepth"
 )
 
 // Client communicates with the API
 type Client struct {
-	Timeout int
+	Host       string
+	HTTPClient *http.Client
 }
 
 func NewClient() *Client {
 	return &Client{
-		Timeout: timeout,
+		Host:       "https://campbx.com",
+		HTTPClient: &http.Client{Timeout: timeout},
 	}
 }
 
 // url returns a full URL for a resource
 func (c *Client) url(resource string) string {
-	return fmt.Sprintf("%v/%v.php", host, resource)
+	return fmt.Sprintf("%v%v/%v.php", c.Host, prefix, resource)
 }
 
 // get a response from a URL
 func (c *Client) get(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	resp, err := c.HTTPClient.Get(url)
 
 	if resp != nil {
 		defer resp.Body.Close()
@@ -91,23 +94,31 @@ func (c *Client) GetDepth() (*OrderBook, error) {
 
 	// now convert those []float32 arrays of price/quantity values to Order
 	// structs
-	orderBook := OrderBook{}
 
-	for _, o := range holder.Asks {
-		order := Order{
-			Price:    o[0],
-			Quantity: o[1],
-		}
-		orderBook.Asks = append(orderBook.Asks, order)
+	asks := make([]Order, len(holder.Asks))
+
+	for i, order := range holder.Asks {
+		asks[i] = NewOrder(order)
 	}
 
-	for _, o := range holder.Bids {
-		order := Order{
-			Price:    o[0],
-			Quantity: o[1],
-		}
-		orderBook.Bids = append(orderBook.Bids, order)
+	bids := make([]Order, len(holder.Bids))
+
+	for i, order := range holder.Bids {
+		bids[i] = NewOrder(order)
+	}
+
+	orderBook := OrderBook{
+		Asks: asks,
+		Bids: bids,
 	}
 
 	return &orderBook, nil
+}
+
+func NewOrder(order []float32) Order {
+	return Order{
+		Price:    order[0],
+		Quantity: order[1],
+	}
+
 }
