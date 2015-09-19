@@ -53,7 +53,12 @@ func (c *Client) get(url string) ([]byte, error) {
 
 // GetTicker returns a Ticker from the API
 func (c *Client) GetTicker() (*Ticker, error) {
-	body, err := c.get(c.url(tickerPath))
+	var body []byte
+	var err error
+
+	if body, err = c.get(c.url(tickerPath)); err != nil {
+		return nil, err
+	}
 
 	var ticker Ticker
 
@@ -62,4 +67,22 @@ func (c *Client) GetTicker() (*Ticker, error) {
 	}
 
 	return &ticker, nil
+}
+
+// GetDepth returns the OrderBook from the API
+func (c *Client) GetDepth() (*OrderBook, error) {
+	var body []byte
+	var err error
+
+	if body, err = c.get(c.url(depthPath)); err != nil {
+		return nil, err
+	}
+
+	var orderBook OrderBook
+
+	if err := json.Unmarshal(body, &orderBook); err != nil {
+		return nil, err
+	}
+
+	return &orderBook, nil
 }
