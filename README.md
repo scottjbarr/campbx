@@ -9,7 +9,7 @@ See tests for example usage.
 
 See
 
-- [CampBX API ](https://campbx.com/api.php)
+- [CampBX API](https://campbx.com/api.php)
 
 ## Licence
 
