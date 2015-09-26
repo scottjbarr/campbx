@@ -24,6 +24,6 @@ type OrderBook struct {
 // Order represents the price and quanty of an individual Order, or the summary
 // of multiple Orders (as in the case of an Order Book)
 type Order struct {
-	Price    float32
-	Quantity float32
+	Price    float32 `json:"price"`
+	Quantity float32 `json:"amount"`
 }
